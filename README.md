@@ -3,7 +3,7 @@ TWRDownloadManager
 
 ## TWRDownloadManager
 
-A modern download manager based on NSURLSession to deal with asynchronous downloading, management and persistence of multiple files.
+A modern download manager for iOS (Objective C) based on NSURLSession to deal with asynchronous downloading, management and persistence of multiple files.
 
 TWRDownloadManager is a singleton instance and can thus be called in your code safely from wherever you need to. The idea of writing yet another download manager library stemmed from the fact that at the time of the writing (and yet still) there were no available open source projects based on the new `NSURLSession` APIs made available by Apple in iOS 7.
 
