@@ -12,6 +12,7 @@
 @interface TWRDownloadManager () <NSURLSessionDelegate, NSURLSessionDownloadDelegate>
 
 @property (strong, nonatomic) NSURLSession *session;
+@property (strong, nonatomic) NSURLSession *backgroundSession;
 @property (strong, nonatomic) NSMutableDictionary *downloads;
 
 @end
@@ -31,8 +32,14 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        // Default session
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
         self.session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
+        
+        // Background session
+        NSURLSessionConfiguration *backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"re.touchwa.downloadmanager"];
+        self.backgroundSession = [NSURLSession sessionWithConfiguration:backgroundConfiguration delegate:self delegateQueue:nil];
+        
         self.downloads = [NSMutableDictionary new];
     }
     return self;
@@ -42,7 +49,8 @@
                   withName:(NSString *)fileName
           inDirectoryNamed:(NSString *)directory
              progressBlock:(void(^)(CGFloat progress))progressBlock
-           completionBlock:(void(^)(BOOL completed))completionBlock {
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode {
     NSURL *url = [NSURL URLWithString:urlString];
     if (!fileName) {
         fileName = [urlString lastPathComponent];
@@ -52,7 +60,12 @@
         NSLog(@"File is downloading!");
     } else if (![self fileExistsWithName:fileName inDirectory:directory]) {
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
-        NSURLSessionDownloadTask *downloadTask = [self.session downloadTaskWithRequest:request];
+        NSURLSessionDownloadTask *downloadTask;
+        if (backgroundMode) {
+            downloadTask = [self.backgroundSession downloadTaskWithRequest:request];
+        } else {
+            downloadTask = [self.session downloadTaskWithRequest:request];
+        }
         TWRDownloadObject *downloadObject = [[TWRDownloadObject alloc] initWithDownloadTask:downloadTask progressBlock:progressBlock completionBlock:completionBlock];
         downloadObject.fileName = fileName;
         downloadObject.directoryName = directory;
@@ -66,22 +79,26 @@
 - (void)downloadFileForURL:(NSString *)urlString
           inDirectoryNamed:(NSString *)directory
              progressBlock:(void(^)(CGFloat progress))progressBlock
-           completionBlock:(void(^)(BOOL completed))completionBlock {
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode {
     // if no file name was provided, use the last path component of the URL as its name
     [self downloadFileForURL:urlString
                     withName:[urlString lastPathComponent]
             inDirectoryNamed:directory
                progressBlock:progressBlock
-             completionBlock:completionBlock];
+             completionBlock:completionBlock
+        enableBackgroundMode:backgroundMode];
 }
 
 - (void)downloadFileForURL:(NSString *)urlString
              progressBlock:(void(^)(CGFloat progress))progressBlock
-           completionBlock:(void(^)(BOOL completed))completionBlock {
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode {
     [self downloadFileForURL:urlString
             inDirectoryNamed:nil
                progressBlock:progressBlock
-             completionBlock:completionBlock];
+             completionBlock:completionBlock
+        enableBackgroundMode:backgroundMode];
 }
 
 - (void)cancelDownloadForUrl:(NSString *)fileIdentifier {
@@ -295,6 +312,33 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     for (NSString *file in tmpDirectory) {
         [[NSFileManager defaultManager] removeItemAtPath:[NSString stringWithFormat:@"%@%@", NSTemporaryDirectory(), file] error:NULL];
     }
+}
+
+#pragma mark - Background download
+
+-(void)URLSessionDidFinishEventsForBackgroundURLSession:(NSURLSession *)session {
+    // Check if all download tasks have been finished.
+    [session getTasksWithCompletionHandler:^(NSArray *dataTasks, NSArray *uploadTasks, NSArray *downloadTasks) {
+        if ([downloadTasks count] == 0) {
+            if (self.backgroundTransferCompletionHandler != nil) {
+                // Copy locally the completion handler.
+                void(^completionHandler)() = self.backgroundTransferCompletionHandler;
+                
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    // Call the completion handler to tell the system that there are no other background transfers.
+                    completionHandler();
+                    
+                    // Show a local notification when all downloads are over.
+                    UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+                    localNotification.alertBody = @"All files have been downloaded!";
+                    [[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
+                }];
+                
+                // Make nil the backgroundTransferCompletionHandler.
+                self.backgroundTransferCompletionHandler = nil;
+            }
+        }
+    }];
 }
 
 @end
