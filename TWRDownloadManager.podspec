@@ -9,8 +9,8 @@
 Pod::Spec.new do |s|
 
   s.name         = "TWRDownloadManager"
-  s.version      = "0.1"
-  s.summary      = "A modern download manager based on NSURLSession to deal with asynchronous downloading, management and persistence of multiple files."
+  s.version      = "1.0.0"
+  s.summary      = "A modern download manager based on NSURLSession to deal with asynchronous and background downloading, management and persistence of multiple files."
   s.homepage     = "https://github.com/chasseurmic/TWRDownloadManager"
 
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.social_media_url = "http://twitter.com/chasseurmic"
   s.source       = {
     :git => "https://github.com/chasseurmic/TWRDownloadManager.git",
-    :tag => "0.1"
+    :tag => "1.0.0"
   }
 
   s.platform     = :ios, '7.0'
