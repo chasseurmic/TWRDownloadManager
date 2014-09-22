@@ -13,9 +13,13 @@ TWRDownloadManager leverages the power of `NSURLSession` and `NSURLSessionDownlo
 
 **09.22.2014 - UPDATE!!!**
 
-In v1.0.0 `TWRDownloadManager` now supports background modes. The  API has changed so it’s not backwards compatible, hence its bump to v1.0.0. See the documentation below for further information.
+**v1.0.0** of `TWRDownloadManager` now supports background modes. The  API has changed so it’s not backwards compatible, hence its bump to v1.0.0. See the documentation below for further information.
 
 A demo project has also been added to showcase the use of the download manager in its simplest form.
+
+**v1.1.0** of `TWRDownloadManager` adds the ability to pass a block when creating the download to keep track of an estimated remaining download time. The algorithm can definitely be improved but it works. 
+
+Updated demo project.
 
 
 ## Installing the library
@@ -224,3 +228,7 @@ Now in your code, whenever you set up a new cell you can get the cell's own prog
 ## License
 
 Usage is provided under the [MIT License](http://opensource.org/licenses/mit-license.php).  See LICENSE for the full details.
+
+## Contributions
+
+All contributions are welcome. Please fork the project to add functionalities and open a pull request to have them merged into the master branch in the next releases.
