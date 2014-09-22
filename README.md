@@ -9,6 +9,15 @@ TWRDownloadManager is a singleton instance and can thus be called in your code s
 
 TWRDownloadManager leverages the power of `NSURLSession` and `NSURLSessionDownloadTask` to make downloading of files and keeping track of their progress a breeze.
 
+- - - 
+
+**09.22.2014 - UPDATE!!!**
+
+In v1.0.0 `TWRDownloadManager` now supports background modes. The  API has changed so it’s not backwards compatible, hence its bump to v1.0.0. See the documentation below for further information.
+
+A demo project has also been added to showcase the use of the download manager in its simplest form.
+
+
 ## Installing the library
 
 To use the library, just add the dependency to your `Podfile`:
@@ -49,16 +58,19 @@ All the following instance methods can be called directly on `
                   withName:(NSString *)fileName
           inDirectoryNamed:(NSString *)directory
              progressBlock:(void(^)(CGFloat progress))progressBlock
-           completionBlock:(void(^)(BOOL completed))completionBlock;
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode;
 
 - (void)downloadFileForURL:(NSString *)url
           inDirectoryNamed:(NSString *)directory
              progressBlock:(void(^)(CGFloat progress))progressBlock
-           completionBlock:(void(^)(BOOL completed))completionBlock;
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode;
 
 - (void)downloadFileForURL:(NSString *)url
              progressBlock:(void(^)(CGFloat progress))progressBlock
-           completionBlock:(void(^)(BOOL completed))completionBlock;
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode;
 ```
 
 The easiest way to get started is by simply passing to the last of the aforementioned methods the URL string of the file that needs to be downloaded. You will get a chance to pass in two blocks that will help you keep track of the download progress (a float from 0 to 1) and of the completion of the task.
@@ -131,6 +143,29 @@ Downloaded files can be deleted via the following methods:
 - (BOOL)deleteFileWithName:(NSString *)fileName inDirectory:(NSString *)directoryName;
 ```
 
+### Background Mode
+
+To enable background downloads in iOS 7+, you should conform to the following steps:
+
+- enable background modes in your project. Select the project in the Project Navigator in Xcode, select your target, then select the `Capabilities` tab and finally enable Background Modes:
+
+![Enable Background modes](http://cocoahunter-blog.s3.amazonaws.com/TWRDownloadManager/bg_modes.png)
+
+- add the following method to your AppDelegate
+
+```objc
+- (void)application:(UIApplication *)application handleEventsForBackgroundURLSession:(NSString *)identifier completionHandler:(void (^)())completionHandler{
+    [TWRDownloadManager sharedManager].backgroundTransferCompletionHandler = completionHandler;   
+}
+```
+
+- register for local notifications in your `application:didFinishLaunchingWithOptions:` so that you can display a message to the user when the download completes:
+
+```objc 
+if ([UIApplication instancesRespondToSelector:@selector(registerUserNotificationSettings:)]) {
+        [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound categories:nil]];
+}
+```
 ## Using TWRDownloadManager with custom UITableViewCell
 
 `TWRDownloadManager`, being able to keep track of multiple downloads at once, could be used to show a list of current downloads inside a table view. 
