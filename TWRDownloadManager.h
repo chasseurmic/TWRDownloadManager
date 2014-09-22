@@ -32,6 +32,29 @@
            completionBlock:(void(^)(BOOL completed))completionBlock
       enableBackgroundMode:(BOOL)backgroundMode;
 
+#pragma mark - Download with estimated time
+
+- (void)downloadFileForURL:(NSString *)url
+                  withName:(NSString *)fileName
+          inDirectoryNamed:(NSString *)directory
+             progressBlock:(void(^)(CGFloat progress))progressBlock
+             remainingTime:(void(^)(NSUInteger seconds))remainingTimeBlock
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode;
+
+- (void)downloadFileForURL:(NSString *)url
+          inDirectoryNamed:(NSString *)directory
+             progressBlock:(void(^)(CGFloat progress))progressBlock
+             remainingTime:(void(^)(NSUInteger seconds))remainingTimeBlock
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode;
+
+- (void)downloadFileForURL:(NSString *)url
+             progressBlock:(void(^)(CGFloat progress))progressBlock
+             remainingTime:(void(^)(NSUInteger seconds))remainingTimeBlock
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode;
+
 - (void)cancelAllDownloads;
 - (void)cancelDownloadForUrl:(NSString *)fileIdentifier;
 
