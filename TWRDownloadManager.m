@@ -21,13 +21,12 @@
 @implementation TWRDownloadManager
 
 + (instancetype)sharedManager {
-    static TWRDownloadManager *_sharedManager = nil;
+    static id sharedManager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _sharedManager = [[TWRDownloadManager alloc] init];
+        sharedManager = [[self alloc] init];
     });
-    
-    return _sharedManager;
+    return sharedManager;
 }
 
 - (instancetype)init {
