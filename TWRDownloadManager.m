@@ -288,6 +288,11 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     return retValue;
 }
 
+- (BOOL)isFileDownloadingForUrl:(NSString *)fileIdentifier {
+    return [self isFileDownloadingForUrl:fileIdentifier
+                       withProgressBlock:nil];
+}
+
 - (BOOL)isFileDownloadingForUrl:(NSString *)fileIdentifier
               withProgressBlock:(void(^)(CGFloat progress))block {
     return [self isFileDownloadingForUrl:fileIdentifier
@@ -301,8 +306,12 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     BOOL retValue = NO;
     TWRDownloadObject *download = [self.downloads objectForKey:fileIdentifier];
     if (download) {
-        download.progressBlock = block;
-        download.completionBlock = completionBlock;
+        if (block) {
+            download.progressBlock = block;
+        }
+        if (completionBlock) {
+            download.completionBlock = completionBlock;
+        }
         retValue = YES;
     }
     return retValue;
