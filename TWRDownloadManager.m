@@ -8,6 +8,7 @@
 
 #import "TWRDownloadManager.h"
 #import "TWRDownloadObject.h"
+#import <UIKit/UIKit.h>
 
 @interface TWRDownloadManager () <NSURLSessionDelegate, NSURLSessionDownloadDelegate>
 

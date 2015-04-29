@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import <TWRDownloadManager/TWRDownloadManager.h>
+#import "TWRDownloadManager.h"
 
 @interface AppDelegate ()
 

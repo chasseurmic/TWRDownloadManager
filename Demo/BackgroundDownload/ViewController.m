@@ -9,7 +9,7 @@
 #define FILE_URL @"http://ovh.net/files/10Mio.dat"
 
 #import "ViewController.h"
-#import <TWRDownloadManager/TWRDownloadManager.h>
+#import "TWRDownloadManager.h"
 
 @interface ViewController ()
 
