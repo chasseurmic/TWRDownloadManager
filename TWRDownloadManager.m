@@ -55,6 +55,7 @@
 - (void)downloadFileForURL:(NSString *)urlString
                   withName:(NSString *)fileName
           inDirectoryNamed:(NSString *)directory
+              friendlyName:(NSString *)friendlyName
              progressBlock:(void(^)(CGFloat progress))progressBlock
              remainingTime:(void(^)(NSUInteger seconds))remainingTimeBlock
            completionBlock:(void(^)(BOOL completed))completionBlock
@@ -62,6 +63,10 @@
     NSURL *url = [NSURL URLWithString:urlString];
     if (!fileName) {
         fileName = [urlString lastPathComponent];
+    }
+    
+    if (!friendlyName) {
+        friendlyName = fileName;
     }
     
     if (![self fileDownloadCompletedForUrl:urlString]) {
@@ -77,12 +82,23 @@
         TWRDownloadObject *downloadObject = [[TWRDownloadObject alloc] initWithDownloadTask:downloadTask progressBlock:progressBlock remainingTime:remainingTimeBlock completionBlock:completionBlock];
         downloadObject.startDate = [NSDate date];
         downloadObject.fileName = fileName;
+        downloadObject.friendlyName = friendlyName;
         downloadObject.directoryName = directory;
         [self.downloads addEntriesFromDictionary:@{urlString:downloadObject}];
         [downloadTask resume];
     } else {
         NSLog(@"File already exists!");
     }
+}
+
+- (void)downloadFileForURL:(NSString *)urlString
+                  withName:(NSString *)fileName
+          inDirectoryNamed:(NSString *)directory
+             progressBlock:(void(^)(CGFloat progress))progressBlock
+             remainingTime:(void(^)(NSUInteger seconds))remainingTimeBlock
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode {
+    
 }
 
 - (void)downloadFileForURL:(NSString *)url
@@ -249,6 +265,13 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     
     // remove object from the download
     [self.downloads removeObjectForKey:fileIdentifier];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // Show a local notification when download is over.
+        UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+        localNotification.alertBody = [NSString stringWithFormat:@"%@ has been downloaded", download.friendlyName];
+        [[UIApplication sharedApplication] presentLocalNotificationNow:localNotification];
+    });
 }
 
 - (CGFloat)remainingTimeForDownload:(TWRDownloadObject *)download

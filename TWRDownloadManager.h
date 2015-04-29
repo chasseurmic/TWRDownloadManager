@@ -15,6 +15,15 @@
 
 + (instancetype)sharedManager;
 
+- (void)downloadFileForURL:(NSString *)urlString
+                  withName:(NSString *)fileName
+          inDirectoryNamed:(NSString *)directory
+              friendlyName:(NSString *)friendlyName
+             progressBlock:(void(^)(CGFloat progress))progressBlock
+             remainingTime:(void(^)(NSUInteger seconds))remainingTimeBlock
+           completionBlock:(void(^)(BOOL completed))completionBlock
+      enableBackgroundMode:(BOOL)backgroundMode;
+
 - (void)downloadFileForURL:(NSString *)url
                   withName:(NSString *)fileName
           inDirectoryNamed:(NSString *)directory

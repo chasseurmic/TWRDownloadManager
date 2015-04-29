@@ -54,4 +54,8 @@
     
 }
 
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    NSLog(@"Notification received");
+}
+
 @end
