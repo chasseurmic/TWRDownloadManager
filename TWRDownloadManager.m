@@ -200,14 +200,18 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     if (download.progressBlock) {
         CGFloat progress = (CGFloat)totalBytesWritten / (CGFloat)totalBytesExpectedToWrite;
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            download.progressBlock(progress);
+            if(download.progressBlock){
+                download.progressBlock(progress); //exception when progressblock is nil
+            }
         });
     }
     
     CGFloat remainingTime = [self remainingTimeForDownload:download bytesTransferred:totalBytesWritten totalBytesExpectedToWrite:totalBytesExpectedToWrite];
     if (download.remainingTimeBlock) {
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            download.remainingTimeBlock((NSUInteger)remainingTime);
+            if (download.remainingTimeBlock) {
+                download.remainingTimeBlock((NSUInteger)remainingTime);
+            }
         });
     }
 }
