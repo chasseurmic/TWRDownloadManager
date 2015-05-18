@@ -37,10 +37,13 @@
         self.session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
         
         // Background session
-        NSURLSessionConfiguration *backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"re.touchwa.downloadmanager"];
+        NSURLSessionConfiguration *backgroundConfiguration = nil;
         
         if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1) {
             backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"re.touchwa.downloadmanager"];
+        }
+        else {
+            backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"re.touchwa.downloadmanager"];
         }
         
         self.backgroundSession = [NSURLSession sessionWithConfiguration:backgroundConfiguration delegate:self delegateQueue:nil];
@@ -219,6 +222,18 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     NSURL *destinationLocation;
     
     NSString *fileIdentifier = downloadTask.originalRequest.URL.absoluteString;
+    
+    if ([downloadTask.response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSInteger statusCode = [(NSHTTPURLResponse*)downloadTask.response statusCode];
+        if (statusCode >= 400) {
+            [self.downloads removeObjectForKey:fileIdentifier];
+            if (download.completionBlock) {
+                download.completionBlock(NO);
+            }
+            return;
+        }
+    }
+    
     TWRDownloadObject *download = [self.downloads objectForKey:fileIdentifier];
     
     if (download.directoryName) {
