@@ -222,7 +222,8 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     NSURL *destinationLocation;
     
     NSString *fileIdentifier = downloadTask.originalRequest.URL.absoluteString;
-    
+    TWRDownloadObject *download = [self.downloads objectForKey:fileIdentifier];
+ 
     if ([downloadTask.response isKindOfClass:[NSHTTPURLResponse class]]) {
         NSInteger statusCode = [(NSHTTPURLResponse*)downloadTask.response statusCode];
         if (statusCode >= 400) {
@@ -233,8 +234,6 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
             return;
         }
     }
-    
-    TWRDownloadObject *download = [self.downloads objectForKey:fileIdentifier];
     
     if (download.directoryName) {
         destinationLocation = [[[self cachesDirectoryUrlPath] URLByAppendingPathComponent:download.directoryName] URLByAppendingPathComponent:download.fileName];
