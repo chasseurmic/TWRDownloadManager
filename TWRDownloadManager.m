@@ -224,35 +224,36 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     NSString *fileIdentifier = downloadTask.originalRequest.URL.absoluteString;
     TWRDownloadObject *download = [self.downloads objectForKey:fileIdentifier];
  
+ 	BOOL success = YES;
+ 
     if ([downloadTask.response isKindOfClass:[NSHTTPURLResponse class]]) {
         NSInteger statusCode = [(NSHTTPURLResponse*)downloadTask.response statusCode];
         if (statusCode >= 400) {
-            [self.downloads removeObjectForKey:fileIdentifier];
-            if (download.completionBlock) {
-                download.completionBlock(NO);
-            }
-            return;
+	        NSLog(@"ERROR: HTTP status code %@", @(statusCode));
+			success = NO;
         }
     }
     
-    if (download.directoryName) {
-        destinationLocation = [[[self cachesDirectoryUrlPath] URLByAppendingPathComponent:download.directoryName] URLByAppendingPathComponent:download.fileName];
-    } else {
-        destinationLocation = [[self cachesDirectoryUrlPath] URLByAppendingPathComponent:download.fileName];
-    }
+	if (success) {
+	    if (download.directoryName) {
+	        destinationLocation = [[[self cachesDirectoryUrlPath] URLByAppendingPathComponent:download.directoryName] URLByAppendingPathComponent:download.fileName];
+	    } else {
+	        destinationLocation = [[self cachesDirectoryUrlPath] URLByAppendingPathComponent:download.fileName];
+	    }
     
-    // Move downloaded item from tmp directory to te caches directory
-    // (not synced with user's iCloud documents)
-    [[NSFileManager defaultManager] moveItemAtURL:location
-                                            toURL:destinationLocation
-                                            error:&error];
-    if (error) {
-        NSLog(@"ERROR: %@", error);
-    }
-    
+	    // Move downloaded item from tmp directory to te caches directory
+	    // (not synced with user's iCloud documents)
+	    [[NSFileManager defaultManager] moveItemAtURL:location
+	                                            toURL:destinationLocation
+	                                            error:&error];
+	    if (error) {
+	        NSLog(@"ERROR: %@", error);
+	    }
+	}
+
     if (download.completionBlock) {
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            download.completionBlock(YES);
+            download.completionBlock(success);
         });
     }
     
