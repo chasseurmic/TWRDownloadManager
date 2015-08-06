@@ -238,7 +238,7 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     
     if (download.completionBlock) {
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            download.completionBlock(YES);
+            download.completionBlock(!error);
         });
     }
     
