@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreGraphics/CoreGraphics.h>
 
 typedef void(^TWRDownloadRemainingTimeBlock)(NSUInteger seconds);
 typedef void(^TWRDownloadProgressBlock)(CGFloat progress);

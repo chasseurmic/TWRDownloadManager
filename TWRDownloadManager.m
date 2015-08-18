@@ -238,12 +238,28 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     
     if (download.completionBlock) {
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            download.completionBlock(YES);
+            download.completionBlock(!error);
         });
     }
     
     // remove object from the download
     [self.downloads removeObjectForKey:fileIdentifier];
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+{
+    NSString *fileIdentifier = task.originalRequest.URL.absoluteString;
+    TWRDownloadObject *download = [self.downloads objectForKey:fileIdentifier];
+    if (error) {
+        if (download.completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                download.completionBlock(!error);
+            });
+        }
+        
+        // remove object from the download
+        [self.downloads removeObjectForKey:fileIdentifier];
+    }
 }
 
 - (CGFloat)remainingTimeForDownload:(TWRDownloadObject *)download
