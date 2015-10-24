@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import <TWRDownloadManager/TWRDownloadManager.h>
+#import "TWRDownloadManager.h"
 
 @interface AppDelegate ()
 
@@ -52,6 +52,10 @@
     
     [TWRDownloadManager sharedManager].backgroundTransferCompletionHandler = completionHandler;
     
+}
+
+- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
+    NSLog(@"Notification received");
 }
 
 @end

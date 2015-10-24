@@ -14,6 +14,11 @@
 		1538CCF519C4F056002C04E6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1538CCF419C4F056002C04E6 /* Images.xcassets */; };
 		1538CCF819C4F056002C04E6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1538CCF619C4F056002C04E6 /* LaunchScreen.xib */; };
 		1538CD0419C4F057002C04E6 /* BackgroundDownloadTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1538CD0319C4F057002C04E6 /* BackgroundDownloadTests.m */; };
+		BC9702E51AF0FDD8006A688B /* TWRDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BC9702E21AF0FDD8006A688B /* TWRDownloadManager.m */; };
+		BC9702E61AF0FDD8006A688B /* TWRDownloadObject.m in Sources */ = {isa = PBXBuildFile; fileRef = BC9702E41AF0FDD8006A688B /* TWRDownloadObject.m */; };
+		BC9702E81AF0FDEA006A688B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC9702E71AF0FDEA006A688B /* CoreGraphics.framework */; };
+		BC9703231AF1020A006A688B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC9703221AF1020A006A688B /* UIKit.framework */; };
+		BC9703251AF10211006A688B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC9703241AF10211006A688B /* Foundation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +46,13 @@
 		1538CD0219C4F057002C04E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1538CD0319C4F057002C04E6 /* BackgroundDownloadTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BackgroundDownloadTests.m; sourceTree = "<group>"; };
 		752DEB8E15794F5E823ADAC6 /* libPods-BackgroundDownload.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BackgroundDownload.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC9702E11AF0FDD8006A688B /* TWRDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWRDownloadManager.h; path = ../TWRDownloadManager.h; sourceTree = "<group>"; };
+		BC9702E21AF0FDD8006A688B /* TWRDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TWRDownloadManager.m; path = ../TWRDownloadManager.m; sourceTree = "<group>"; };
+		BC9702E31AF0FDD8006A688B /* TWRDownloadObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TWRDownloadObject.h; path = ../TWRDownloadObject.h; sourceTree = "<group>"; };
+		BC9702E41AF0FDD8006A688B /* TWRDownloadObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TWRDownloadObject.m; path = ../TWRDownloadObject.m; sourceTree = "<group>"; };
+		BC9702E71AF0FDEA006A688B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		BC9703221AF1020A006A688B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		BC9703241AF10211006A688B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,6 +60,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC9703251AF10211006A688B /* Foundation.framework in Frameworks */,
+				BC9703231AF1020A006A688B /* UIKit.framework in Frameworks */,
+				BC9702E81AF0FDEA006A688B /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +79,7 @@
 		1538CCDB19C4F056002C04E6 = {
 			isa = PBXGroup;
 			children = (
+				BC9702E01AF0FDC9006A688B /* TWRDownloadManager */,
 				1538CCE619C4F056002C04E6 /* BackgroundDownload */,
 				1538CD0019C4F057002C04E6 /* BackgroundDownloadTests */,
 				1538CCE519C4F056002C04E6 /* Products */,
@@ -124,9 +140,23 @@
 		29DA0BE69ED74FB6BBA3B7B4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BC9703241AF10211006A688B /* Foundation.framework */,
+				BC9703221AF1020A006A688B /* UIKit.framework */,
+				BC9702E71AF0FDEA006A688B /* CoreGraphics.framework */,
 				752DEB8E15794F5E823ADAC6 /* libPods-BackgroundDownload.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BC9702E01AF0FDC9006A688B /* TWRDownloadManager */ = {
+			isa = PBXGroup;
+			children = (
+				BC9702E11AF0FDD8006A688B /* TWRDownloadManager.h */,
+				BC9702E21AF0FDD8006A688B /* TWRDownloadManager.m */,
+				BC9702E31AF0FDD8006A688B /* TWRDownloadObject.h */,
+				BC9702E41AF0FDD8006A688B /* TWRDownloadObject.m */,
+			);
+			name = TWRDownloadManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,11 +166,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1538CD0719C4F057002C04E6 /* Build configuration list for PBXNativeTarget "BackgroundDownload" */;
 			buildPhases = (
-				87D24A61F99B45BAB31C0C9D /* Check Pods Manifest.lock */,
 				1538CCE019C4F056002C04E6 /* Sources */,
 				1538CCE119C4F056002C04E6 /* Frameworks */,
 				1538CCE219C4F056002C04E6 /* Resources */,
-				594B24D616F04E93AE5C279F /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -231,47 +259,16 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		594B24D616F04E93AE5C279F /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-BackgroundDownload-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		87D24A61F99B45BAB31C0C9D /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		1538CCE019C4F056002C04E6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC9702E61AF0FDD8006A688B /* TWRDownloadObject.m in Sources */,
 				1538CCF019C4F056002C04E6 /* ViewController.m in Sources */,
 				1538CCED19C4F056002C04E6 /* AppDelegate.m in Sources */,
 				1538CCEA19C4F056002C04E6 /* main.m in Sources */,
+				BC9702E51AF0FDD8006A688B /* TWRDownloadManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

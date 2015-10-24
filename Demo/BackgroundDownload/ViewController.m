@@ -9,7 +9,7 @@
 #define FILE_URL @"http://ovh.net/files/10Mio.dat"
 
 #import "ViewController.h"
-#import <TWRDownloadManager/TWRDownloadManager.h>
+#import "TWRDownloadManager.h"
 
 @interface ViewController ()
 
@@ -46,12 +46,12 @@
 - (IBAction)startDownload:(id)sender {
     // Just a demo example file...
     [[TWRDownloadManager sharedManager] downloadFileForURL:FILE_URL progressBlock:^(CGFloat progress) {
-//        NSLog(@"%.2f", progress);
+        NSLog(@"%.2f", progress);
         self.progress = progress;
         self.progressView.progress = progress;
     } remainingTime:^(NSUInteger seconds) {
         NSLog(@"ETA: %lu sec.", (unsigned long)seconds);
-        self.mainLabel.text = [NSString stringWithFormat:@"Progress: %.0f%% - ETA: %lu sec.", self.progress, seconds];
+        self.mainLabel.text = [NSString stringWithFormat:@"Progress: %.0f%% - ETA: %lu sec.", self.progress*100, seconds];
     } completionBlock:^(BOOL completed) {
         NSLog(@"Download completed!");
         self.deleteButton.enabled = YES;
