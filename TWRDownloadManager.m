@@ -37,10 +37,13 @@
         self.session = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:nil];
         
         // Background session
-        NSURLSessionConfiguration *backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:[[NSBundle mainBundle] bundleIdentifier]];
+        NSURLSessionConfiguration *backgroundConfiguration = nil;
         
         if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1) {
             backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:[[NSBundle mainBundle] bundleIdentifier]];
+        }
+        else {
+            backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"re.touchwa.downloadmanager"];
         }
         
         self.backgroundSession = [NSURLSession sessionWithConfiguration:backgroundConfiguration delegate:self delegateQueue:nil];
@@ -240,26 +243,37 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
     
     NSString *fileIdentifier = downloadTask.originalRequest.URL.absoluteString;
     TWRDownloadObject *download = [self.downloads objectForKey:fileIdentifier];
-    
-    if (download.directoryName) {
-        [self createDirectoryNamed:download.directoryName];
-        destinationLocation = [[[self cachesDirectoryUrlPath] URLByAppendingPathComponent:download.directoryName] URLByAppendingPathComponent:download.fileName];
-    } else {
-        destinationLocation = [[self cachesDirectoryUrlPath] URLByAppendingPathComponent:download.fileName];
+ 
+ 	BOOL success = YES;
+ 
+    if ([downloadTask.response isKindOfClass:[NSHTTPURLResponse class]]) {
+        NSInteger statusCode = [(NSHTTPURLResponse*)downloadTask.response statusCode];
+        if (statusCode >= 400) {
+	        NSLog(@"ERROR: HTTP status code %@", @(statusCode));
+			success = NO;
+        }
     }
     
-    // Move downloaded item from tmp directory to te caches directory
-    // (not synced with user's iCloud documents)
-    [[NSFileManager defaultManager] moveItemAtURL:location
-                                            toURL:destinationLocation
-                                            error:&error];
-    if (error) {
-        NSLog(@"ERROR: %@", error);
-    }
+	if (success) {
+	    if (download.directoryName) {
+	        destinationLocation = [[[self cachesDirectoryUrlPath] URLByAppendingPathComponent:download.directoryName] URLByAppendingPathComponent:download.fileName];
+	    } else {
+	        destinationLocation = [[self cachesDirectoryUrlPath] URLByAppendingPathComponent:download.fileName];
+	    }
     
+	    // Move downloaded item from tmp directory to te caches directory
+	    // (not synced with user's iCloud documents)
+	    [[NSFileManager defaultManager] moveItemAtURL:location
+	                                            toURL:destinationLocation
+	                                            error:&error];
+	    if (error) {
+	        NSLog(@"ERROR: %@", error);
+	    }
+	}
+
     if (download.completionBlock) {
         dispatch_async(dispatch_get_main_queue(), ^(void) {
-            download.completionBlock(!error);
+            download.completionBlock(success);
         });
     }
     
@@ -282,6 +296,25 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
         if (download.completionBlock) {
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 download.completionBlock(!error);
+            });
+        }
+        
+        // remove object from the download
+        [self.downloads removeObjectForKey:fileIdentifier];
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+{
+    if (error) {
+        NSLog(@"ERROR: %@", error);
+
+        NSString *fileIdentifier = task.originalRequest.URL.absoluteString;
+        TWRDownloadObject *download = [self.downloads objectForKey:fileIdentifier];
+
+        if (download.completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                download.completionBlock(NO);
             });
         }
         
