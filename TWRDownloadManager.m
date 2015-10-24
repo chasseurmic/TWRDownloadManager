@@ -45,6 +45,9 @@
         else {
             backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"re.touchwa.downloadmanager"];
         }
+        else {
+            backgroundConfiguration = [NSURLSessionConfiguration backgroundSessionConfiguration:@"re.touchwa.downloadmanager"];
+        }
         
         self.backgroundSession = [NSURLSession sessionWithConfiguration:backgroundConfiguration delegate:self delegateQueue:nil];
         
@@ -296,6 +299,25 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
         if (download.completionBlock) {
             dispatch_async(dispatch_get_main_queue(), ^(void) {
                 download.completionBlock(!error);
+            });
+        }
+        
+        // remove object from the download
+        [self.downloads removeObjectForKey:fileIdentifier];
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+{
+    if (error) {
+        NSLog(@"ERROR: %@", error);
+
+        NSString *fileIdentifier = task.originalRequest.URL.absoluteString;
+        TWRDownloadObject *download = [self.downloads objectForKey:fileIdentifier];
+
+        if (download.completionBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^(void) {
+                download.completionBlock(NO);
             });
         }
         
